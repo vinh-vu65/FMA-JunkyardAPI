@@ -8,7 +8,6 @@ public enum PartsCategory
     Brakes,
     Wheel,
     Tyre,
-    Interior,
     Door,
     Exhaust,
     Light
