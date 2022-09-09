@@ -35,7 +35,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Add(Car car)
+    public IActionResult Add([FromBody]Car car)
     {
         _context.Add(car);
         _context.SaveChanges();
