@@ -18,15 +18,16 @@ public class CarsController : ControllerBase
     }
     
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_context.Cars);
+        var cars = await _context.Cars.ToArrayAsync();
+        return Ok(cars);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var car = _context.Cars.Find(id);
+        var car = await _context.Cars.FindAsync(id);
         if (car is null)
         {
             return NotFound();
@@ -35,10 +36,10 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Add([FromBody]Car car)
+    public async Task<IActionResult> Add([FromBody]Car car)
     {
         _context.Add(car);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return CreatedAtAction(
             "GetById",
@@ -47,7 +48,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update([FromBody]Car car, int id)
+    public async Task<IActionResult> Update([FromBody]Car car, int id)
     {
         if (id != car.CarId)
         {
@@ -58,11 +59,11 @@ public class CarsController : ControllerBase
         
         try
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (_context.Cars.Find(id) is null)
+            if (await _context.Cars.FindAsync(id) is null)
             {
                 return NotFound();
             }
@@ -74,9 +75,9 @@ public class CarsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<Car> Delete(int id)
+    public async Task<ActionResult<Car>> Delete(int id)
     {
-        var car = _context.Cars.Find(id);
+        var car = await _context.Cars.FindAsync(id);
 
         if (car is null)
         {
@@ -84,7 +85,7 @@ public class CarsController : ControllerBase
         }
 
         _context.Cars.Remove(car);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return car;
     }

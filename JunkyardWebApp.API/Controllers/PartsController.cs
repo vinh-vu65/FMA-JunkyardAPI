@@ -18,15 +18,15 @@ public class PartsController : ControllerBase
     }
     
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_context.Parts);
+        return Ok(await _context.Parts.ToListAsync());
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var part = _context.Parts.Find(id);
+        var part = await _context.Parts.FindAsync(id);
         if (part is null)
         {
             return NotFound();
@@ -35,10 +35,10 @@ public class PartsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Add([FromBody]Part part)
+    public async Task<IActionResult> Add([FromBody]Part part)
     {
         _context.Add(part);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return CreatedAtAction(
             "GetById",
@@ -47,7 +47,7 @@ public class PartsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update([FromBody]Part part, int id)
+    public async Task<IActionResult> Update([FromBody]Part part, int id)
     {
         if (id != part.PartId)
         {
@@ -58,11 +58,11 @@ public class PartsController : ControllerBase
         
         try
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (_context.Parts.Find(id) is null)
+            if (await _context.Parts.FindAsync(id) is null)
             {
                 return NotFound();
             }
@@ -74,9 +74,9 @@ public class PartsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public ActionResult<Part> Delete(int id)
+    public async Task<ActionResult<Part>> Delete(int id)
     {
-        var part = _context.Parts.Find(id);
+        var part = await _context.Parts.FindAsync(id);
 
         if (part is null)
         {
@@ -84,7 +84,7 @@ public class PartsController : ControllerBase
         }
 
         _context.Parts.Remove(part);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return part;
     }
