@@ -1,5 +1,5 @@
+using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
-using JunkyardWebApp.API.Models.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,25 +9,24 @@ namespace JunkyardWebApp.API.Controllers;
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-    private readonly JunkyardContext _context;
+    private readonly IRepository<Car> _carRepository;
 
-    public CarsController(JunkyardContext context)
+    public CarsController(IRepository<Car> carRepository)
     {
-        _context = context;
-        _context.Database.EnsureCreated();
+        _carRepository = carRepository;
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var cars = await _context.Cars.ToArrayAsync();
+        var cars = await _carRepository.Get();
         return Ok(cars);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var car = await _context.Cars.FindAsync(id);
+        var car = await _carRepository.GetById(id);
         if (car is null)
         {
             return NotFound();
@@ -35,11 +34,24 @@ public class CarsController : ControllerBase
         return Ok(car);
     }
 
+    [HttpGet("{id}/parts")]
+    public async Task<IActionResult> GetPartsByCar(int id)
+    {
+        var car = await _carRepository.GetById(id);
+    
+        if (car is null)
+        {
+            return NotFound();
+        }
+        
+        var carParts = car.AvailableParts;
+        return Ok(carParts);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Add([FromBody]Car car)
     {
-        _context.Add(car);
-        await _context.SaveChangesAsync();
+        await _carRepository.Add(car);
 
         return CreatedAtAction(
             "GetById",
@@ -55,38 +67,28 @@ public class CarsController : ControllerBase
             return BadRequest();
         }
         
-        _context.Entry(car).State = EntityState.Modified;
+        if (await _carRepository.GetById(id) is null)
+        {
+            return NotFound();
+        }
         
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (await _context.Cars.FindAsync(id) is null)
-            {
-                return NotFound();
-            }
-            
-            throw;
-        }
-
+        await _carRepository.Update(car);
+        
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Car>> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var car = await _context.Cars.FindAsync(id);
+        var car = await _carRepository.GetById(id);
 
         if (car is null)
         {
             return NotFound();
         }
 
-        _context.Cars.Remove(car);
-        await _context.SaveChangesAsync();
+        await _carRepository.Delete(car);
 
-        return car;
+        return NoContent();
     }
 }

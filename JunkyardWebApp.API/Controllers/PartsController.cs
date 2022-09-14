@@ -1,5 +1,5 @@
+using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
-using JunkyardWebApp.API.Models.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,24 +9,24 @@ namespace JunkyardWebApp.API.Controllers;
 [Route("[controller]")]
 public class PartsController : ControllerBase
 {
-    private readonly JunkyardContext _context;
+    private readonly IRepository<Part> _partRepository;
 
-    public PartsController(JunkyardContext context)
+    public PartsController(IRepository<Part> partRepository)
     {
-        _context = context;
-        _context.Database.EnsureCreated();
+        _partRepository = partRepository;
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        return Ok(await _context.Parts.ToListAsync());
+        var parts = await _partRepository.Get();
+        return Ok(parts);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var part = await _context.Parts.FindAsync(id);
+        var part = await _partRepository.GetById(id);
         if (part is null)
         {
             return NotFound();
@@ -37,8 +37,7 @@ public class PartsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Add([FromBody]Part part)
     {
-        _context.Add(part);
-        await _context.SaveChangesAsync();
+        await _partRepository.Add(part);
 
         return CreatedAtAction(
             "GetById",
@@ -54,38 +53,28 @@ public class PartsController : ControllerBase
             return BadRequest();
         }
         
-        _context.Entry(part).State = EntityState.Modified;
+        if (await _partRepository.GetById(id) is null)
+        {
+            return NotFound();
+        }
         
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (await _context.Parts.FindAsync(id) is null)
-            {
-                return NotFound();
-            }
-            
-            throw;
-        }
-
+        await _partRepository.Update(part);
+        
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<Part>> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        var part = await _context.Parts.FindAsync(id);
+        var part = await _partRepository.GetById(id);
 
         if (part is null)
         {
             return NotFound();
         }
 
-        _context.Parts.Remove(part);
-        await _context.SaveChangesAsync();
+        await _partRepository.Delete(part);
 
-        return part;
+        return NoContent();
     }
 }
