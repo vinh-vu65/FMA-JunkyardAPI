@@ -1,7 +1,8 @@
+using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace JunkyardWebApp.API.Models.Data;
+namespace JunkyardWebApp.API.Data;
 
 public static class ModelBuilderExtensions
 {

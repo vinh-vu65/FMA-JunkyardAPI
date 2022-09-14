@@ -1,6 +1,7 @@
+using JunkyardWebApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JunkyardWebApp.API.Models.Data;
+namespace JunkyardWebApp.API.Data;
 
 public class JunkyardContext : DbContext
 {
@@ -16,21 +17,13 @@ public class JunkyardContext : DbContext
         modelBuilder.Entity<Car>()
             .HasMany(c => c.AvailableParts)
             .WithOne(p => p.Car)
-            .HasForeignKey(c => c.CarId);
+            .HasForeignKey(p => p.CarId)
+            .OnDelete(DeleteBehavior.Cascade);
         
-        modelBuilder.Entity<Customer>()
-            .HasMany(c => c.OrderHistory)
-            .WithOne(o => o.Customer)
-            .HasForeignKey(c => c.CustomerId);
-        
-        modelBuilder.Entity<Order>()
-            .HasMany(o => o.OrderItems);
-        
-        modelBuilder.Entity<Order>()
-            .HasOne(c => c.Customer);
-        
-        modelBuilder.Entity<Part>()
-            .HasOne(p => p.Car);
+        // modelBuilder.Entity<Part>()
+        //     .HasOne<Car>(p => p.Car)
+        //     .WithMany(c => c.AvailableParts)
+        //     .HasForeignKey(p => p.CarId);
 
         modelBuilder.Seed();
     }
