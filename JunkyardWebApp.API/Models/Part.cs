@@ -11,5 +11,5 @@ public class Part
     public decimal Price { get; set; }
     public int CarId { get; set; }
     [JsonIgnore]
-    public Car Car { get; set; }
+    public Car? Car { get; set; }
 }
