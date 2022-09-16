@@ -10,6 +10,7 @@ public class PartRepository : IPartRepository
     public PartRepository(JunkyardContext context)
     {
         _context = context;
+        _context.Database.EnsureCreated();
     }
     
     public async Task<ICollection<Part>> Get()
