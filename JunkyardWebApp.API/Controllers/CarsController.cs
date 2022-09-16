@@ -34,19 +34,19 @@ public class CarsController : ControllerBase
         return Ok(car);
     }
 
-    [HttpGet("{id}/parts")]
-    public async Task<IActionResult> GetPartsByCar(int id)
-    {
-        var car = await _carRepository.GetById(id);
-    
-        if (car is null)
-        {
-            return NotFound();
-        }
-        
-        var carParts = car.AvailableParts;
-        return Ok(carParts);
-    }
+    // [HttpGet("{id}/parts")]
+    // public async Task<IActionResult> GetPartsByCar(int id)
+    // {
+    //     var car = await _carRepository.GetById(id);
+    //
+    //     if (car is null)
+    //     {
+    //         return NotFound();
+    //     }
+    //     
+    //     var carParts = car.AvailableParts;
+    //     return Ok(carParts);
+    // }
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody]Car car)

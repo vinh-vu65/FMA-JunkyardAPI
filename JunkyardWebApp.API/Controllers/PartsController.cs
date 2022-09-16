@@ -9,9 +9,9 @@ namespace JunkyardWebApp.API.Controllers;
 [Route("[controller]")]
 public class PartsController : ControllerBase
 {
-    private readonly IRepository<Part> _partRepository;
+    private readonly IPartRepository _partRepository;
 
-    public PartsController(IRepository<Part> partRepository)
+    public PartsController(IPartRepository partRepository)
     {
         _partRepository = partRepository;
     }
@@ -20,6 +20,19 @@ public class PartsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var parts = await _partRepository.Get();
+        return Ok(parts);
+    }
+
+    [HttpGet("/cars/{carId}/[controller]")]
+    public async Task<IActionResult> GetAllPartsByCarId(int carId)
+    {
+        var parts = await _partRepository.GetPartsByCarId(carId);
+
+        if (parts is null)
+        {
+            return NotFound();
+        }
+
         return Ok(parts);
     }
 

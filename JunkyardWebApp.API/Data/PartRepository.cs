@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JunkyardWebApp.API.Data;
 
-public class PartRepository : IRepository<Part>
+public class PartRepository : IPartRepository
 {
     private readonly JunkyardContext _context;
     
@@ -15,6 +15,12 @@ public class PartRepository : IRepository<Part>
     public async Task<ICollection<Part>> Get()
     {
         return await _context.Parts.ToListAsync();
+    }
+
+    public async Task<ICollection<Part>>? GetPartsByCarId(int carId)
+    {
+        var parts = await _context.Parts.Where(p => p.CarId == carId).ToArrayAsync();
+        return parts;
     }
 
     public async Task<Part>? GetById(int id)
