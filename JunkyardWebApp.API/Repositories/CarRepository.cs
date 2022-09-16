@@ -1,7 +1,8 @@
+using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JunkyardWebApp.API.Data;
+namespace JunkyardWebApp.API.Repositories;
 
 public class CarRepository : IRepository<Car>
 {
@@ -18,7 +19,7 @@ public class CarRepository : IRepository<Car>
         return await _context.Cars.Include(c => c.AvailableParts).ToListAsync();
     }
 
-    public async Task<Car>? GetById(int id)
+    public async Task<Car?> GetById(int id)
     {
         return await _context.Cars.Include(c => c.AvailableParts).SingleOrDefaultAsync(c => c.CarId == id);
     }

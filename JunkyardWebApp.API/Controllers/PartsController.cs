@@ -1,7 +1,6 @@
-using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
+using JunkyardWebApp.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace JunkyardWebApp.API.Controllers;
 

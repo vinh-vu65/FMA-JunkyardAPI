@@ -1,7 +1,8 @@
+using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace JunkyardWebApp.API.Data;
+namespace JunkyardWebApp.API.Repositories;
 
 public class PartRepository : IPartRepository
 {
@@ -18,13 +19,13 @@ public class PartRepository : IPartRepository
         return await _context.Parts.ToListAsync();
     }
 
-    public async Task<ICollection<Part>>? GetPartsByCarId(int carId)
+    public async Task<ICollection<Part>?> GetPartsByCarId(int carId)
     {
         var parts = await _context.Parts.Where(p => p.CarId == carId).ToArrayAsync();
         return parts;
     }
 
-    public async Task<Part>? GetById(int id)
+    public async Task<Part?> GetById(int id)
     {
         return await _context.Parts.FindAsync(id);
     }

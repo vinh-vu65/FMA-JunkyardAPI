@@ -1,5 +1,6 @@
 using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
+using JunkyardWebApp.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

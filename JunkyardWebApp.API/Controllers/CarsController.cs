@@ -1,7 +1,6 @@
-using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
+using JunkyardWebApp.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace JunkyardWebApp.API.Controllers;
 
@@ -33,20 +32,6 @@ public class CarsController : ControllerBase
         }
         return Ok(car);
     }
-
-    // [HttpGet("{id}/parts")]
-    // public async Task<IActionResult> GetPartsByCar(int id)
-    // {
-    //     var car = await _carRepository.GetById(id);
-    //
-    //     if (car is null)
-    //     {
-    //         return NotFound();
-    //     }
-    //     
-    //     var carParts = car.AvailableParts;
-    //     return Ok(carParts);
-    // }
 
     [HttpPost]
     public async Task<IActionResult> Add([FromBody]Car car)
