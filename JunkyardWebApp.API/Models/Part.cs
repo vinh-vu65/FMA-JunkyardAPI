@@ -3,7 +3,7 @@ using JunkyardWebApp.API.Models.Enums;
 
 namespace JunkyardWebApp.API.Models;
 
-public class Part
+public record Part
 {
     public int PartId { get; set; }
     public PartsCategory Category { get; set; }

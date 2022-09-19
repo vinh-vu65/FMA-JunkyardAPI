@@ -1,6 +1,6 @@
 namespace JunkyardWebApp.API.Models;
 
-public class Car
+public record Car
 {
     public int CarId { get; set; }
     public int Year { get; set; }
