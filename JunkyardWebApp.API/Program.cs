@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Repositories;
@@ -7,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddScoped<IRepository<Car>, CarRepository>();
 builder.Services.AddScoped<IPartRepository, PartRepository>();
 
