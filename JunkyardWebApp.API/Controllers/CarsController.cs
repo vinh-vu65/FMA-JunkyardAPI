@@ -40,9 +40,10 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]PostPutCarDto carRequest)
+    public async Task<IActionResult> Add([FromBody]PostPutCarDto requestData)
     {
-        var car = carRequest.ToEntity();
+        var car = new Car();
+        car.UpdateWith(requestData);
         await _carRepository.Add(car);
 
         return CreatedAtAction(
@@ -54,10 +55,19 @@ public class CarsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromBody]PostPutCarDto requestData, int id)
     {
+        // ModelState.IsValid
+        
         var carToUpdate = await _carRepository.GetById(id);
         if (carToUpdate is null)
         {
-            return NotFound();
+            var car = new Car {CarId = id};
+            car.UpdateWith(requestData);
+            await _carRepository.Add(car);
+            
+            return CreatedAtAction(
+                "GetById",
+                new {id = car.CarId},
+                car);
         }
 
         carToUpdate.UpdateWith(requestData);
