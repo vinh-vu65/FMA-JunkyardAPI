@@ -1,7 +1,7 @@
 using JunkyardWebApp.API.Dtos;
 using JunkyardWebApp.API.Mappers;
 using JunkyardWebApp.API.Models;
-using JunkyardWebApp.API.Repositories;
+using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JunkyardWebApp.API.Controllers;
@@ -10,17 +10,17 @@ namespace JunkyardWebApp.API.Controllers;
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-    private readonly IRepository<Car> _carRepository;
+    private readonly IService<Car> _carService;
 
-    public CarsController(IRepository<Car> carRepository)
+    public CarsController(IService<Car> carService)
     {
-        _carRepository = carRepository;
+        _carService = carService;
     }
     
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var cars = await _carRepository.Get();
+        var cars = await _carService.GetAll();
         var mappedCars = cars.Select(c => c.ToDto());
         return Ok(mappedCars);
     }
@@ -28,7 +28,7 @@ public class CarsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var car = await _carRepository.GetById(id);
+        var car = await _carService.GetById(id);
         
         if (car is null)
         {
@@ -40,11 +40,16 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]PostPutCarDto requestData)
+    public async Task<IActionResult> Add([FromBody]PostPutCarDto requestData, int? id)
     {
         var car = new Car();
+        if (id.HasValue)
+        {
+            car.CarId = id.Value;
+        }
+        
         car.UpdateWith(requestData);
-        await _carRepository.Add(car);
+        await _carService.Add(car);
 
         return CreatedAtAction(
             "GetById",
@@ -55,23 +60,14 @@ public class CarsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromBody]PostPutCarDto requestData, int id)
     {
-        // ModelState.IsValid
-        
-        var carToUpdate = await _carRepository.GetById(id);
+        var carToUpdate = await _carService.GetById(id);
         if (carToUpdate is null)
         {
-            var car = new Car {CarId = id};
-            car.UpdateWith(requestData);
-            await _carRepository.Add(car);
-            
-            return CreatedAtAction(
-                "GetById",
-                new {id = car.CarId},
-                car);
+            return await Add(requestData, id);
         }
 
         carToUpdate.UpdateWith(requestData);
-        await _carRepository.Update(carToUpdate);
+        await _carService.Update(carToUpdate);
         
         return NoContent();
     }
@@ -79,15 +75,14 @@ public class CarsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var car = await _carRepository.GetById(id);
+        var car = await _carService.GetById(id);
 
         if (car is null)
         {
             return NotFound();
         }
 
-        await _carRepository.Delete(car);
-
+        await _carService.Delete(car);
         return NoContent();
     }
 }

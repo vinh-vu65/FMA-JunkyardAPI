@@ -90,7 +90,7 @@ public class PartsController : ControllerBase
     }
 
     [HttpPut("{partId}")]
-    public async Task<IActionResult> Update([FromBody]PostPutPartDto requestData, int partId, int carId)
+    public async Task<IActionResult> Update(int carId, [FromBody]PostPutPartDto requestData, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
@@ -116,7 +116,6 @@ public class PartsController : ControllerBase
         await _partService.Update(partToUpdate!);
 
         return NoContent();
-
     }
 
     [HttpDelete("{partId}")]
@@ -140,12 +139,3 @@ public class PartsController : ControllerBase
         return NoContent();
     }
 }
-
-// var part = new Part {PartId = partId, CarId = carId};
-// part.UpdateWith(requestData);
-// await _partService.Add(part);
-//
-// return CreatedAtAction(
-//     "GetById",
-//     new {partId = part.PartId, carId = part.CarId},
-//     part);
