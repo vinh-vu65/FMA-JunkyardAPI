@@ -1,92 +1,151 @@
+using JunkyardWebApp.API.Dtos;
+using JunkyardWebApp.API.Mappers;
 using JunkyardWebApp.API.Models;
-using JunkyardWebApp.API.Repositories;
+using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JunkyardWebApp.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("/cars/{carId}/[controller]")]
 public class PartsController : ControllerBase
 {
-    private readonly IPartRepository _partRepository;
+    private readonly IPartService _partService;
 
-    public PartsController(IPartRepository partRepository)
+    public PartsController(IPartService partService)
     {
-        _partRepository = partRepository;
+        _partService = partService;
     }
     
-    [HttpGet]
+    [HttpGet("/[controller]")]
     public async Task<IActionResult> GetAll()
     {
-        var parts = await _partRepository.Get();
-        return Ok(parts);
+        var parts = await _partService.GetAllParts();
+        var partsDto = parts.Select(p => p.ToDto());
+        return Ok(partsDto);
     }
 
-    [HttpGet("/cars/{carId}/[controller]")]
-    public async Task<IActionResult> GetAllPartsByCarId(int carId)
+    [HttpGet]
+    public async Task<IActionResult> GetPartsByCarId(int carId)
     {
-        var parts = await _partRepository.GetPartsByCarId(carId);
-
-        if (parts is null)
+        var carExists = await _partService.CarExists(carId);
+        if (!carExists)
         {
-            return NotFound();
+            return NotFound("Car not found");
         }
+        
+        var parts = await _partService.GetPartsByCarId(carId);
 
-        return Ok(parts);
+        var partsDto = parts.Select(p => p.ToDto());
+        return Ok(partsDto);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{partId}")]
+    public async Task<IActionResult> GetById(int partId, int carId)
     {
-        var part = await _partRepository.GetById(id);
-        if (part is null)
+        var carExists = await _partService.CarExists(carId);
+        if (!carExists)
         {
-            return NotFound();
+            return NotFound("Car not found");
         }
-        return Ok(part);
+
+        var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
+        if (!partExistsForCar)
+        {
+            return NotFound("PartId not found for this car");
+        }
+
+        var part = await _partService.GetPartById(partId);
+        
+        var partDto = part!.ToDto();
+        return Ok(partDto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]Part part)
+    public async Task<IActionResult> Add(int carId, [FromBody]PostPutPartDto requestData, int? partId = null)
     {
-        await _partRepository.Add(part);
+        var carExists = await _partService.CarExists(carId);
+        if (!carExists)
+        {
+            return NotFound("Car not found");
+        }
+
+        var part = new Part { CarId = carId };
+        if (partId.HasValue)
+        {
+            if (await _partService.PartExistsInDb(partId.Value))
+            {
+                return BadRequest("Another part already has this partId");
+            }
+            part.PartId = partId.Value;
+        }
+        
+        part.UpdateWith(requestData);
+        await _partService.Add(part);
 
         return CreatedAtAction(
             "GetById",
-            new {id = part.PartId},
+            new {partId = part.PartId, carId = part.CarId},
             part);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromBody]Part part, int id)
+    [HttpPut("{partId}")]
+    public async Task<IActionResult> Update([FromBody]PostPutPartDto requestData, int partId, int carId)
     {
-        if (id != part.PartId)
+        var carExists = await _partService.CarExists(carId);
+        if (!carExists)
         {
-            return BadRequest();
+            return NotFound("Car was not found");
         }
+
+        var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
+        var partExistsInDb = await _partService.PartExistsInDb(partId);
         
-        if (await _partRepository.GetById(id) is null)
+        if (!partExistsForCar && !partExistsInDb)
         {
-            return NotFound();
+            return await Add(carId, requestData, partId);
         }
-        
-        await _partRepository.Update(part);
-        
+
+        if (partExistsInDb)
+        {
+            return BadRequest("Another part already has this partId");
+        }
+
+        var partToUpdate = await _partService.GetPartById(partId);
+        partToUpdate!.UpdateWith(requestData);
+        await _partService.Update(partToUpdate!);
+
         return NoContent();
+
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{partId}")]
+    public async Task<IActionResult> Delete(int carId, int partId)
     {
-        var part = await _partRepository.GetById(id);
-
-        if (part is null)
+        var carExists = await _partService.CarExists(carId);
+        if (!carExists)
         {
-            return NotFound();
+            return NotFound("Car not found");
         }
 
-        await _partRepository.Delete(part);
+        var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
+        if (!partExistsForCar)
+        {
+            return NotFound("PartId not found for this car");
+        }
 
+        var part = await _partService.GetPartById(partId);
+        await _partService.Delete(part!);
+        
         return NoContent();
     }
 }
+
+// var part = new Part {PartId = partId, CarId = carId};
+// part.UpdateWith(requestData);
+// await _partService.Add(part);
+//
+// return CreatedAtAction(
+//     "GetById",
+//     new {partId = part.PartId, carId = part.CarId},
+//     part);
