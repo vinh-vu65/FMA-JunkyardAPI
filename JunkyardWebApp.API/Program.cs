@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using JunkyardWebApp.API.Data;
 using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Repositories;
+using JunkyardWebApp.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,9 +13,10 @@ builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddScoped<IRepository<Car>, CarRepository>();
 builder.Services.AddScoped<IPartRepository, PartRepository>();
+builder.Services.AddScoped<IPartService, PartService>();
+builder.Services.AddDbContext<JunkyardContext>(options => options.UseInMemoryDatabase("Junkyard"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddDbContext<JunkyardContext>(options => options.UseInMemoryDatabase("Junkyard"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
