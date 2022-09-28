@@ -32,7 +32,7 @@ public class PartService : IPartService
         return allParts.Any(p => p.PartId == partId);
     }
 
-    public async Task<ICollection<Part>> GetAllParts()
+    public async Task<ICollection<Part>> GetAll()
     {
         return await _partRepository.Get();
     }
@@ -42,7 +42,7 @@ public class PartService : IPartService
         return await _partRepository.GetPartsByCarId(carId);
     }
 
-    public async Task<Part?> GetPartById(int partId)
+    public async Task<Part?> GetById(int partId)
     {
         return await _partRepository.GetById(partId);
     }

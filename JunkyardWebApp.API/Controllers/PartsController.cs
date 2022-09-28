@@ -20,7 +20,7 @@ public class PartsController : ControllerBase
     [HttpGet("/[controller]")]
     public async Task<IActionResult> GetAll()
     {
-        var parts = await _partService.GetAllParts();
+        var parts = await _partService.GetAll();
         var partsDto = parts.Select(p => p.ToDto());
         return Ok(partsDto);
     }
@@ -55,7 +55,7 @@ public class PartsController : ControllerBase
             return NotFound("PartId not found for this car");
         }
 
-        var part = await _partService.GetPartById(partId);
+        var part = await _partService.GetById(partId);
         
         var partDto = part!.ToDto();
         return Ok(partDto);
@@ -111,7 +111,7 @@ public class PartsController : ControllerBase
             return BadRequest("Another part already has this partId");
         }
 
-        var partToUpdate = await _partService.GetPartById(partId);
+        var partToUpdate = await _partService.GetById(partId);
         partToUpdate!.UpdateWith(requestData);
         await _partService.Update(partToUpdate!);
 
@@ -134,7 +134,7 @@ public class PartsController : ControllerBase
             return NotFound("PartId not found for this car");
         }
 
-        var part = await _partService.GetPartById(partId);
+        var part = await _partService.GetById(partId);
         await _partService.Delete(part!);
         
         return NoContent();
