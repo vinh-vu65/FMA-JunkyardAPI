@@ -13,21 +13,32 @@ public class PartRepository : IPartRepository
         _context = context;
         _context.Database.EnsureCreated();
     }
-    
+
     public async Task<ICollection<Part>> Get()
     {
-        return await _context.Parts.ToListAsync();
+        return await _context.Parts
+            .Include(p => p.Car)
+            .OrderBy(p => p.CarId)
+            .ThenBy(p => p.PartId)
+            .ToListAsync();
     }
 
-    public async Task<ICollection<Part>?> GetPartsByCarId(int carId)
+    public async Task<ICollection<Part>> GetPartsByCarId(int carId)
     {
-        var parts = await _context.Parts.Where(p => p.CarId == carId).ToArrayAsync();
+        var parts = await _context.Parts
+            .Where(p => p.CarId == carId)
+            .Include(p => p.Car)
+            .OrderBy(p => p.PartId)
+            .ToArrayAsync();
+        
         return parts;
     }
 
     public async Task<Part?> GetById(int id)
     {
-        return await _context.Parts.FindAsync(id);
+        return await _context.Parts
+            .Include(p => p.Car)
+            .SingleOrDefaultAsync(p => p.PartId == id);
     }
 
     public async Task Add(Part part)

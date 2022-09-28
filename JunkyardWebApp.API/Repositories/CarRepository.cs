@@ -16,12 +16,17 @@ public class CarRepository : IRepository<Car>
     
     public async Task<ICollection<Car>> Get()
     {
-        return await _context.Cars.Include(c => c.AvailableParts).ToListAsync();
+        return await _context.Cars
+            .Include(c => c.AvailableParts)
+            .OrderBy(c => c.CarId)
+            .ToListAsync();
     }
 
     public async Task<Car?> GetById(int id)
     {
-        return await _context.Cars.Include(c => c.AvailableParts).SingleOrDefaultAsync(c => c.CarId == id);
+        return await _context.Cars
+            .Include(c => c.AvailableParts)
+            .SingleOrDefaultAsync(c => c.CarId == id);
     }
 
     public async Task Add(Car car)
