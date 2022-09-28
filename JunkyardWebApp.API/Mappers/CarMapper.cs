@@ -4,17 +4,7 @@ using JunkyardWebApp.API.Models;
 namespace JunkyardWebApp.API.Mappers;
 
 public static class CarMapper
-{
-    public static Car ToEntity(this PostPutCarDto dto)
-    {
-        return new Car
-        {
-            Year = dto.Year,
-            Make = dto.Make,
-            Model = dto.Model
-        };
-    }
-
+{ 
     public static void UpdateWith(this Car car, PostPutCarDto dto)
     {
         car.Year = dto.Year;
