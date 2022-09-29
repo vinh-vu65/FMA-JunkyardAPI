@@ -1,8 +1,8 @@
 namespace JunkyardWebApp.API.Dtos;
 
-public class PostPutCarDto
+public record PostPutCarDto
 {
-    public int Year { get; set; }
-    public string Make { get; set; }
-    public string Model { get; set; }
+    public int Year { get; init; }
+    public string Make { get; init; }
+    public string Model { get; init; }
 }
