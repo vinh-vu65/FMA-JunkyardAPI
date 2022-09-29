@@ -5,16 +5,16 @@ namespace JunkyardWebApp.API.Mappers;
 
 public static class CarMapper
 { 
-    public static void UpdateWith(this Car car, PostPutCarDto dto)
+    public static void UpdateWith(this Car car, CarWriteDto dto)
     {
         car.Year = dto.Year;
         car.Make = dto.Make;
         car.Model = dto.Model;
     }
 
-    public static GetCarDto ToDto(this Car car)
+    public static CarReadDto ToDto(this Car car)
     {
-        return new GetCarDto
+        return new CarReadDto
         {
             CarId = car.CarId,
             Year = car.Year,

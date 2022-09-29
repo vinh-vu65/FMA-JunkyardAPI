@@ -40,7 +40,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]PostPutCarDto requestData, int? id)
+    public async Task<IActionResult> Add([FromBody]CarWriteDto requestData, int? id)
     {
         var car = new Car();
         if (id.HasValue)
@@ -58,7 +58,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromBody]PostPutCarDto requestData, int id)
+    public async Task<IActionResult> Update([FromBody]CarWriteDto requestData, int id)
     {
         var carToUpdate = await _carService.GetById(id);
         if (carToUpdate is null)

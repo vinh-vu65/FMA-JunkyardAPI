@@ -5,9 +5,9 @@ namespace JunkyardWebApp.API.Mappers;
 
 public static class PartMapper
 {
-    public static GetPartDto ToDto(this Part part)
+    public static PartReadDto ToDto(this Part part)
     {
-        return new GetPartDto
+        return new PartReadDto
         {
             CarId = part.CarId,
             PartId = part.PartId,
@@ -20,7 +20,7 @@ public static class PartMapper
         };
     }
 
-    public static void UpdateWith(this Part part, PostPutPartDto dto)
+    public static void UpdateWith(this Part part, PartWriteDto dto)
     {
         part.Category = dto.Category;
         part.Description = dto.Description;

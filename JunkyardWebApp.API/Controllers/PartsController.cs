@@ -62,7 +62,7 @@ public class PartsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add(int carId, [FromBody]PostPutPartDto requestData, int? partId = null)
+    public async Task<IActionResult> Add(int carId, [FromBody]PartWriteDto requestData, int? partId = null)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
@@ -90,7 +90,7 @@ public class PartsController : ControllerBase
     }
 
     [HttpPut("{partId}")]
-    public async Task<IActionResult> Update(int carId, [FromBody]PostPutPartDto requestData, int partId)
+    public async Task<IActionResult> Update(int carId, [FromBody]PartWriteDto requestData, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
@@ -106,7 +106,7 @@ public class PartsController : ControllerBase
             return await Add(carId, requestData, partId);
         }
 
-        if (partExistsInDb)
+        if (!partExistsForCar && partExistsInDb)
         {
             return BadRequest("Another part already has this partId");
         }
