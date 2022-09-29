@@ -6,7 +6,7 @@ using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
-namespace JunkyardWebApp.API.Tests;
+namespace JunkyardWebApp.API.Tests.Unit.ControllerTests;
 
 public class CarsControllerTests
 {
@@ -175,4 +175,3 @@ public class CarsControllerTests
         Assert.Equal(204, result!.StatusCode);
     }
 }
-
