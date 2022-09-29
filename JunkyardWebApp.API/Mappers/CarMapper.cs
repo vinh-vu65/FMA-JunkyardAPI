@@ -20,7 +20,7 @@ public static class CarMapper
             Year = car.Year,
             Make = car.Make,
             Model = car.Model,
-            AvailablePartsCount = car.AvailableParts.Count 
+            AvailablePartsCount = car.AvailableParts?.Count ?? 0 
         };
     }
 }
