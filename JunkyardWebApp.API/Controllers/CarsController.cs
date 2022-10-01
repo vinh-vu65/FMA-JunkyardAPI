@@ -32,7 +32,7 @@ public class CarsController : ControllerBase
         
         if (car is null)
         {
-            return NotFound();
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
         
         var carDto = car.ToDto();
@@ -79,7 +79,7 @@ public class CarsController : ControllerBase
 
         if (car is null)
         {
-            return NotFound();
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
 
         await _carService.Delete(car);

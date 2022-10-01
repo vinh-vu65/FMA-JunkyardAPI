@@ -31,7 +31,7 @@ public class PartsController : ControllerBase
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound("Car not found");
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
         
         var parts = await _partService.GetPartsByCarId(carId);
@@ -46,13 +46,13 @@ public class PartsController : ControllerBase
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound("Car not found");
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
         if (!partExistsForCar)
         {
-            return NotFound("PartId not found for this car");
+            return NotFound(new{ StatusCode = 404, Message = "PartId not found for this car" });
         }
 
         var part = await _partService.GetById(partId);
@@ -67,7 +67,7 @@ public class PartsController : ControllerBase
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound("Car not found");
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
 
         var part = new Part { CarId = carId };
@@ -75,7 +75,7 @@ public class PartsController : ControllerBase
         {
             if (await _partService.PartExistsInDb(partId.Value))
             {
-                return BadRequest("Another part already has this partId");
+                return BadRequest(new{ StatusCode = 400, Message = "Another part already has this partId" });
             }
             part.PartId = partId.Value;
         }
@@ -95,7 +95,7 @@ public class PartsController : ControllerBase
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound("Car was not found");
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
@@ -108,7 +108,7 @@ public class PartsController : ControllerBase
 
         if (!partExistsForCar && partExistsInDb)
         {
-            return BadRequest("Another part already has this partId");
+            return BadRequest(new{ StatusCode = 400, Message = "Another part already has this partId" });
         }
 
         var partToUpdate = await _partService.GetById(partId);
@@ -124,13 +124,13 @@ public class PartsController : ControllerBase
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound("Car not found");
+            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
         if (!partExistsForCar)
         {
-            return NotFound("PartId not found for this car");
+            return NotFound(new{ StatusCode = 404, Message = "PartId not found for this car" });
         }
 
         var part = await _partService.GetById(partId);
