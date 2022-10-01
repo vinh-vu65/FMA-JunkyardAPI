@@ -39,7 +39,7 @@ public class CarsControllerTests
         _carService.GetById(Arg.Any<int>()).Returns((Car?) null);
         var controller = new CarsController(_carService);
 
-        var result = await controller.GetById(1) as StatusCodeResult;
+        var result = await controller.GetById(1) as ObjectResult;
 
         Assert.Equal(404, result!.StatusCode);
     }
@@ -157,7 +157,7 @@ public class CarsControllerTests
         _carService.GetById(carId).Returns((Car?) null);
         var controller = new CarsController(_carService);
 
-        var result = await controller.Delete(carId) as StatusCodeResult;
+        var result = await controller.Delete(carId) as ObjectResult;
 
         Assert.Equal(404, result!.StatusCode);
     }
