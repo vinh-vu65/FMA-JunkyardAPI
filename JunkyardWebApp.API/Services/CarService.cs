@@ -3,13 +3,19 @@ using JunkyardWebApp.API.Repositories;
 
 namespace JunkyardWebApp.API.Services;
 
-public class CarService : IService<Car>
+public class CarService : ICarService
 {
     private readonly IRepository<Car> _carRepository;
 
     public CarService(IRepository<Car> carRepository)
     {
         _carRepository = carRepository;
+    }
+
+    public async Task<bool> CarExistsInDb(int carId)
+    {
+        var car = await GetById(carId);
+        return car is not null;
     }
 
     public async Task<ICollection<Car>> GetAll()
