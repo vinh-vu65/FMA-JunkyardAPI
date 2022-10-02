@@ -10,7 +10,7 @@ namespace JunkyardWebApp.API.Tests.Unit.ControllerTests;
 
 public class CarsControllerTests
 {
-    private readonly IService<Car> _carService = Substitute.For<IService<Car>>();
+    private readonly ICarService _carService = Substitute.For<ICarService>();
     private readonly Car _car = new() {CarId = 1, Year = 1999, Make = "Test", Model = "Car"};
     private readonly Car _car2 = new() {CarId = 2, Year = 2020, Make = "Testla", Model = "X"};
     private readonly Car[] _carsInDb;
@@ -76,7 +76,7 @@ public class CarsControllerTests
     }
     
     [Fact]
-    public async Task Add_ShouldCallAddOnCarService()
+    public async Task Add_Return400StatusCode_WhenGivenCarIdOfAnotherCarInDb()
     {
         var request = new CarWriteDto
         {
@@ -84,12 +84,13 @@ public class CarsControllerTests
             Model = "Dto",
             Year = 2022
         };
-        var expectedCarToAdd = new Car {CarId = 0, Make = "Test", Model = "Dto", Year = 2022, AvailableParts = null};
+        var carId = 34;
+        _carService.CarExistsInDb(carId).Returns(true);
         var controller = new CarsController(_carService);
 
-        await controller.Add(request);
+        var result = await controller.Add(request, carId) as ObjectResult;
 
-        await _carService.Received(1).Add(expectedCarToAdd);
+        Assert.Equal(400, result!.StatusCode);
     }
     
     [Fact]

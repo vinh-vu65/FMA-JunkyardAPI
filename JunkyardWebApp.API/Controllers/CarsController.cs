@@ -10,9 +10,9 @@ namespace JunkyardWebApp.API.Controllers;
 [Route("[controller]")]
 public class CarsController : ControllerBase
 {
-    private readonly IService<Car> _carService;
+    private readonly ICarService _carService;
 
-    public CarsController(IService<Car> carService)
+    public CarsController(ICarService carService)
     {
         _carService = carService;
     }
@@ -45,6 +45,11 @@ public class CarsController : ControllerBase
         var car = new Car();
         if (id.HasValue)
         {
+            var carAlreadyExists = await _carService.CarExistsInDb(id.Value);
+            if (carAlreadyExists)
+            {
+                return BadRequest(new {StatusCode = 400, Message = "Another car already has this carId"});
+            }
             car.CarId = id.Value;
         }
         
