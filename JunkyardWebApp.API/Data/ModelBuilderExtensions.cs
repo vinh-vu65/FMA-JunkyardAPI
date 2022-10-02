@@ -33,11 +33,5 @@ public static class ModelBuilderExtensions
                 new Part { PartId = 13, Category = PartsCategory.Exhaust, Price = 290.00M, Description = "Exhaust for 2003 Silvia", CarId = 4 },
                 new Part { PartId = 14, Category = PartsCategory.Brakes, Price = 370.00M, Description = "Headlight for 2003 Silvia", CarId = 4 }
                 );
-        
-        modelBuilder.Entity<Customer>()
-            .HasData(
-                new Customer { CustomerId = 1, Name = "Susan Boyle", Address = "123 Fake St", Email = "susan.boyle@gmail.com", Phone = "98573643"},
-                new Customer { CustomerId = 2, Name = "Homer Simpson", Address = "742 Evergreen Tce", Email = "mmm_donuts@gmail.com", Phone = "59684938"}
-                );
     }
 }
