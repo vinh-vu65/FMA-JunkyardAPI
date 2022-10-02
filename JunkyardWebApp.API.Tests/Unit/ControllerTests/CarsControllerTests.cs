@@ -1,6 +1,5 @@
 using JunkyardWebApp.API.Controllers;
 using JunkyardWebApp.API.Dtos;
-using JunkyardWebApp.API.Mappers;
 using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,14 @@ public class CarsControllerTests
     {
         _carService.GetById(Arg.Any<int>()).Returns(_car);
         var controller = new CarsController(_carService);
-        var expected = _car.ToDto();
+        var expected = new CarReadDto
+        {
+            CarId = 1,
+            Year = 1999,
+            Make = "Test",
+            Model = "Car",
+            AvailablePartsCount = 0
+        };
 
         var result = await controller.GetById(1) as ObjectResult;
 
@@ -49,8 +55,22 @@ public class CarsControllerTests
     {
         _carService.GetAll().Returns(_carsInDb);
         var controller = new CarsController(_carService);
-        var firstCarDto = _car.ToDto();
-        var secondCarDto = _car2.ToDto();
+        var firstCarDto = new CarReadDto
+        {
+            CarId = 1,
+            Year = 1999,
+            Make = "Test",
+            Model = "Car",
+            AvailablePartsCount = 0
+        };
+        var secondCarDto = new CarReadDto
+        {
+            CarId = 2,
+            Year = 2020,
+            Make = "Testla",
+            Model = "X",
+            AvailablePartsCount = 0
+        };
         var expected = new[] {firstCarDto, secondCarDto};
 
         var result = await controller.GetAll() as ObjectResult;
