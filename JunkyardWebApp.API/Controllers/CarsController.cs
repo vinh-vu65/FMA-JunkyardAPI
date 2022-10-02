@@ -40,7 +40,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]CarWriteDto requestData, int? id)
+    public async Task<IActionResult> Add([FromBody]CarWriteDto requestData, int? id = null)
     {
         var car = new Car();
         if (id.HasValue)

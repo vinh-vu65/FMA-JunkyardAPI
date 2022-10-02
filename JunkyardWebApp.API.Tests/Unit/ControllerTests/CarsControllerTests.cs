@@ -70,7 +70,7 @@ public class CarsControllerTests
         };
         var controller = new CarsController(_carService);
 
-        var result = await controller.Add(request, null) as ObjectResult;
+        var result = await controller.Add(request) as ObjectResult;
 
         Assert.Equal(201, result!.StatusCode);
     }
@@ -87,7 +87,7 @@ public class CarsControllerTests
         var expectedCarToAdd = new Car {CarId = 0, Make = "Test", Model = "Dto", Year = 2022, AvailableParts = null};
         var controller = new CarsController(_carService);
 
-        await controller.Add(request, null);
+        await controller.Add(request);
 
         await _carService.Received(1).Add(expectedCarToAdd);
     }
