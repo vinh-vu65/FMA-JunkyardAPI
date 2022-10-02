@@ -41,7 +41,7 @@ public class PartsController : ControllerBase
     }
 
     [HttpGet("{partId}")]
-    public async Task<IActionResult> GetById(int partId, int carId)
+    public async Task<IActionResult> GetById(int carId, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
