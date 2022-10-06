@@ -26,4 +26,9 @@
       <ProjectReference Include="..\JunkyardWebApp.API\JunkyardWebApp.API.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Integration" />
+      <Folder Include="Unit\Services" />
+    </ItemGroup>
+
 </Project>
