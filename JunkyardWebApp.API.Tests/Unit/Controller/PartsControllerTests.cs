@@ -6,7 +6,7 @@ using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
-namespace JunkyardWebApp.API.Tests.Unit.ControllerTests;
+namespace JunkyardWebApp.API.Tests.Unit.Controller;
 
 public class PartsControllerTests
 {
@@ -18,7 +18,7 @@ public class PartsControllerTests
     private readonly Part _part2 = new ()
         { PartId = 2, Category = PartsCategory.Brakes, Description = "Test brakes", Price = 20M, CarId = 1 };
     private readonly PartWriteDto _testRequest = new() 
-        { Category = PartsCategory.Door, Description = "Test part request", Price = 23.0M };
+        { Category = "Door", Description = "Test part request", Price = 23.0M };
 
     public PartsControllerTests()
     {
@@ -203,7 +203,7 @@ public class PartsControllerTests
         {
             PartId = partId,
             CarId = carId,
-            Category = _testRequest.Category,
+            Category = PartsCategory.Door,
             Description = _testRequest.Description,
             Price = _testRequest.Price
         };
@@ -240,7 +240,7 @@ public class PartsControllerTests
         {
             PartId = partId,
             CarId = carId,
-            Category = _testRequest.Category,
+            Category = PartsCategory.Door,
             Description = _testRequest.Description,
             Price = _testRequest.Price
         };
@@ -280,7 +280,7 @@ public class PartsControllerTests
         {
             PartId = _part.PartId,
             CarId = _part.CarId,
-            Category = _testRequest.Category,
+            Category = PartsCategory.Door,
             Description = _testRequest.Description,
             Price = _testRequest.Price,
             Car = _part.Car

@@ -1,5 +1,6 @@
 using JunkyardWebApp.API.Dtos;
 using JunkyardWebApp.API.Models;
+using JunkyardWebApp.API.Models.Enums;
 
 namespace JunkyardWebApp.API.Mappers;
 
@@ -22,7 +23,7 @@ public static class PartMapper
 
     public static void UpdateWith(this Part part, PartWriteDto dto)
     {
-        part.Category = dto.Category;
+        part.Category = Enum.Parse<PartsCategory>(dto.Category, true);
         part.Description = dto.Description;
         part.Price = dto.Price;
     }
