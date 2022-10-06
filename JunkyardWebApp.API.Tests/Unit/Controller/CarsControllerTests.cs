@@ -5,7 +5,7 @@ using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 
-namespace JunkyardWebApp.API.Tests.Unit.ControllerTests;
+namespace JunkyardWebApp.API.Tests.Unit.Controller;
 
 public class CarsControllerTests
 {
