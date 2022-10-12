@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JunkyardWebApp.API.Controllers;
 
 [ApiController]
-[Route("/cars/{carId}/[controller]")]
+[Route("/api/cars/{carId}/[controller]")]
 public class PartsController : ControllerBase
 {
     private readonly IPartService _partService;
@@ -17,7 +17,7 @@ public class PartsController : ControllerBase
         _partService = partService;
     }
     
-    [HttpGet("/[controller]")]
+    [HttpGet("/api/[controller]")]
     public async Task<IActionResult> GetAll()
     {
         var parts = await _partService.GetAll();

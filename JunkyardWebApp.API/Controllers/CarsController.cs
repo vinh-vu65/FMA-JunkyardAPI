@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JunkyardWebApp.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CarsController : ControllerBase
 {
     private readonly ICarService _carService;
@@ -25,10 +25,10 @@ public class CarsController : ControllerBase
         return Ok(mappedCars);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{carId}")]
+    public async Task<IActionResult> GetById(int carId)
     {
-        var car = await _carService.GetById(id);
+        var car = await _carService.GetById(carId);
         
         if (car is null)
         {
@@ -62,13 +62,13 @@ public class CarsController : ControllerBase
             car);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update([FromBody]CarWriteDto requestData, int id)
+    [HttpPut("{carId}")]
+    public async Task<IActionResult> Update([FromBody]CarWriteDto requestData, int carId)
     {
-        var carToUpdate = await _carService.GetById(id);
+        var carToUpdate = await _carService.GetById(carId);
         if (carToUpdate is null)
         {
-            return await Add(requestData, id);
+            return await Add(requestData, carId);
         }
 
         carToUpdate.UpdateWith(requestData);
@@ -77,10 +77,10 @@ public class CarsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{carId}")]
+    public async Task<IActionResult> Delete(int carId)
     {
-        var car = await _carService.GetById(id);
+        var car = await _carService.GetById(carId);
 
         if (car is null)
         {
