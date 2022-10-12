@@ -7,8 +7,12 @@ public class JunkyardContext : DbContext
 {
     public DbSet<Car> Cars { get; set; }
     public DbSet<Part> Parts { get; set; }
+    private readonly IDbSeeder _dbSeeder;
 
-    public JunkyardContext(DbContextOptions<JunkyardContext> options) : base(options) { }
+    public JunkyardContext(DbContextOptions<JunkyardContext> options, IDbSeeder dbSeeder) : base(options)
+    {
+        _dbSeeder = dbSeeder;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,6 +22,6 @@ public class JunkyardContext : DbContext
             .HasForeignKey(p => p.CarId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Seed();
+        _dbSeeder.SeedData(modelBuilder);
     }
 }

@@ -26,6 +26,7 @@ builder.Services.AddFluentValidationAutoValidation().AddFluentValidationAutoVali
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Db Context
+builder.Services.AddScoped<IDbSeeder, DbSeeder>();
 builder.Services.AddDbContext<JunkyardContext>(options => options.UseInMemoryDatabase("Junkyard"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
