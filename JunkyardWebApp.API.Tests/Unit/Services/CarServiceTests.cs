@@ -5,6 +5,7 @@ using NSubstitute;
 
 namespace JunkyardWebApp.API.Tests.Unit.Services;
 
+[Trait("Category", "Unit")]
 public class CarServiceTests
 {
     private readonly IRepository<Car> _carRepository = Substitute.For<IRepository<Car>>();

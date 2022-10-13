@@ -8,6 +8,7 @@ using NSubstitute;
 
 namespace JunkyardWebApp.API.Tests.Unit.Controllers;
 
+[Trait("Category", "Unit")]
 public class PartsControllerTests
 {
     private readonly IPartService _partService = Substitute.For<IPartService>();

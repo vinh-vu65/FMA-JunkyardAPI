@@ -5,6 +5,7 @@ using JunkyardWebApp.API.Models.Enums;
 
 namespace JunkyardWebApp.API.Tests.Unit.Mappers;
 
+[Trait("Category", "Unit")]
 public class PartMapperTests
 {
     private readonly Car _car = new() {CarId = 1, Year = 2020, Make = "Testla", Model = "X", AvailableParts = null};
