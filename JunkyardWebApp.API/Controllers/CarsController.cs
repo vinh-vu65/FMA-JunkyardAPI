@@ -58,7 +58,7 @@ public class CarsController : ControllerBase
 
         return CreatedAtAction(
             "GetById",
-            new {id = car.CarId},
+            new {carId = car.CarId},
             car);
     }
 
