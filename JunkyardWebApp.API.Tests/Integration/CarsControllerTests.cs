@@ -32,8 +32,8 @@ public class CarsControllerTests : IDisposable
             {
                 services.Remove(services.SingleOrDefault(s => s.ServiceType == typeof(IDbSeeder))!);
                 services.Remove(services.SingleOrDefault(s => s.ServiceType == typeof(JunkyardContext))!);
-                services.AddTransient(_ => _dbSeeder);
-                services.AddTransient(_ => _dbContext);
+                services.AddSingleton(_ => _dbSeeder);
+                services.AddSingleton(_ => _dbContext);
             }));
         _dbContext.Database.EnsureDeleted();
         _dbContext.Database.EnsureCreated();
@@ -129,11 +129,8 @@ public class CarsControllerTests : IDisposable
         var carId = _car.CarId;
         var requestBody = JsonContent.Create(carRequest);
 
-        // Original _dbContext object will get disposed after client makes call.
-        // using keyword sets scope for new Context object and avoids running into ObjectDisposedException.
-        await using var context = new JunkyardContext(_options, _dbSeeder);
         var response = await _client.PutAsync($"api/cars/{carId}", requestBody);
-        var updatedCar = await context.Cars.FindAsync(carId);
+        var updatedCar = await _dbContext.Cars.FindAsync(carId);
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.Equal(carRequest.Year, updatedCar.Year);
@@ -164,9 +161,8 @@ public class CarsControllerTests : IDisposable
         await _dbContext.SaveChangesAsync();
         var carId = _car.CarId;
 
-        await using var context = new JunkyardContext(_options, _dbSeeder);
         var response = await _client.DeleteAsync($"api/cars/{carId}");
-        var deletedEntry = await context.Cars.FindAsync(carId);
+        var deletedEntry = await _dbContext.Cars.FindAsync(carId);
         
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         Assert.Null(deletedEntry);
