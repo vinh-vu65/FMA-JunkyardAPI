@@ -19,13 +19,12 @@ public class CarsControllerTests : IDisposable
     private readonly Car _car = new() {CarId = 1, Make = "Test", Model = "X", Year = 1995, AvailableParts = null};
     private readonly JunkyardContext _dbContext;
     private readonly IDbSeeder _dbSeeder = Substitute.For<IDbSeeder>();
-    private readonly DbContextOptions<JunkyardContext> _options;
-    
+
     public CarsControllerTests()
     {
-        _options = new DbContextOptionsBuilder<JunkyardContext>()
+        var options = new DbContextOptionsBuilder<JunkyardContext>()
             .UseInMemoryDatabase("testDb").Options;
-         _dbContext = new JunkyardContext(_options, _dbSeeder);
+         _dbContext = new JunkyardContext(options, _dbSeeder);
         
         var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(
             builder => builder.ConfigureServices(services =>
