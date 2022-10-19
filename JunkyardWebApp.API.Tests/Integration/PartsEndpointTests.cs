@@ -14,7 +14,7 @@ using NSubstitute;
 namespace JunkyardWebApp.API.Tests.Integration;
 
 [Trait("Category", "Integration")]
-public class PartsControllerTests : IDisposable
+public class PartsEndpointTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly Car _car = new() {CarId = 1, Make = "Test", Model = "X", Year = 1995};
@@ -23,7 +23,7 @@ public class PartsControllerTests : IDisposable
     private readonly JunkyardContext _dbContext;
     private readonly IDbSeeder _dbSeeder = Substitute.For<IDbSeeder>();
 
-    public PartsControllerTests()
+    public PartsEndpointTests()
     {
         _part.Car = _car;
         
