@@ -10,10 +10,10 @@ public class DbSeeder : IDbSeeder
     {
         modelBuilder.Entity<Car>()
             .HasData(
-                new Car { CarId = 1, Year = 2005, Make = "Toyota", Model = "Corolla" },
-                new Car { CarId = 2, Year = 1995, Make = "Ford", Model = "Falcon" },
-                new Car { CarId = 3, Year = 2012, Make = "Honda", Model = "Accord" },
-                new Car { CarId = 4, Year = 2003, Make = "Nissan", Model = "Silvia" }
+                new Car { CarId = 1, Year = 2005, Make = "Toyota", Model = "Corolla", Colour = CarColour.Red},
+                new Car { CarId = 2, Year = 1995, Make = "Ford", Model = "Falcon", Colour = CarColour.Blue},
+                new Car { CarId = 3, Year = 2012, Make = "Honda", Model = "Accord", Colour = CarColour.Black},
+                new Car { CarId = 4, Year = 2003, Make = "Nissan", Model = "Silvia", Colour = CarColour.Silver}
             );
         
         modelBuilder.Entity<Part>()

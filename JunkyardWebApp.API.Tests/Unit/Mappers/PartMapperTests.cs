@@ -20,7 +20,7 @@ public class PartMapperTests
     [Fact]
     public void ToDto_ShouldReturnNewPartReadDto_WhenGivenPartObject()
     {
-        var expected = new PartReadDto
+        var expected = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 1,
@@ -32,7 +32,7 @@ public class PartMapperTests
             Price = 1M
         };
 
-        var result = _part.ToDto();
+        var result = _part.ToDtoV1();
         
         Assert.Equal(expected, result);
     }

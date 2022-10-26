@@ -4,9 +4,10 @@ using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JunkyardWebApp.API.Controllers;
+namespace JunkyardWebApp.API.Controllers.V2;
 
 [ApiController]
+[ApiVersion("2.0")]
 [Route("/api/cars/{carId}/[controller]")]
 public class PartsController : ControllerBase
 {
@@ -21,7 +22,7 @@ public class PartsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var parts = await _partService.GetAll();
-        var partsDto = parts.Select(p => p.ToDto());
+        var partsDto = parts.Select(p => p.ToDtoV2());
         return Ok(partsDto);
     }
 
@@ -36,7 +37,7 @@ public class PartsController : ControllerBase
         
         var parts = await _partService.GetPartsByCarId(carId);
 
-        var partsDto = parts.Select(p => p.ToDto());
+        var partsDto = parts.Select(p => p.ToDtoV2());
         return Ok(partsDto);
     }
 
@@ -57,7 +58,7 @@ public class PartsController : ControllerBase
 
         var part = await _partService.GetById(partId);
         
-        var partDto = part!.ToDto();
+        var partDto = part!.ToDtoV2();
         return Ok(partDto);
     }
 

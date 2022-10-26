@@ -1,4 +1,4 @@
-using JunkyardWebApp.API.Controllers;
+using JunkyardWebApp.API.Controllers.V1;
 using JunkyardWebApp.API.Dtos;
 using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Models.Enums;
@@ -33,7 +33,7 @@ public class PartsControllerTests
     {
         _partService.GetAll().Returns(_parts);
         var controller = new PartsController(_partService);
-        var firstPartDto = new PartReadDto()
+        var firstPartDto = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 1,
@@ -44,7 +44,7 @@ public class PartsControllerTests
             Description = "Test part",
             Price = 10M
         };
-        var secondPartDto = new PartReadDto()
+        var secondPartDto = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 2,
@@ -82,7 +82,7 @@ public class PartsControllerTests
         _partService.GetPartsByCarId(23).Returns(_parts);
         _partService.CarExists(carId).Returns(true);
         var controller = new PartsController(_partService);
-        var firstPartDto = new PartReadDto()
+        var firstPartDto = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 1,
@@ -93,7 +93,7 @@ public class PartsControllerTests
             Description = "Test part",
             Price = 10M
         };
-        var secondPartDto = new PartReadDto()
+        var secondPartDto = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 2,
@@ -148,7 +148,7 @@ public class PartsControllerTests
         _partService.PartExistsForCar(carId, partId).Returns(true);
         _partService.GetById(partId).Returns(_part);
         var controller = new PartsController(_partService);
-        var expected = new PartReadDto()
+        var expected = new PartReadDtoV1
         {
             CarId = 1,
             PartId = 1,

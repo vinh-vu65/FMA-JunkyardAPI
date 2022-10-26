@@ -1,6 +1,7 @@
-using JunkyardWebApp.API.Controllers;
+using JunkyardWebApp.API.Controllers.V1;
 using JunkyardWebApp.API.Dtos;
 using JunkyardWebApp.API.Models;
+using JunkyardWebApp.API.Models.Enums;
 using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
@@ -25,7 +26,7 @@ public class CarsControllerTests
     {
         _carService.GetById(Arg.Any<int>()).Returns(_car);
         var controller = new CarsController(_carService);
-        var expected = new CarReadDto
+        var expected = new CarReadDtoV1
         {
             CarId = 1,
             Year = 1999,
@@ -56,7 +57,7 @@ public class CarsControllerTests
     {
         _carService.GetAll().Returns(_carsInDb);
         var controller = new CarsController(_carService);
-        var firstCarDto = new CarReadDto
+        var firstCarDto = new CarReadDtoV1
         {
             CarId = 1,
             Year = 1999,
@@ -64,7 +65,7 @@ public class CarsControllerTests
             Model = "Car",
             AvailablePartsCount = 0
         };
-        var secondCarDto = new CarReadDto
+        var secondCarDto = new CarReadDtoV1
         {
             CarId = 2,
             Year = 2020,
@@ -83,7 +84,7 @@ public class CarsControllerTests
     [Fact]
     public async Task Add_ShouldReturn201StatusCode_WhenGivenValidRequestDto()
     {
-        var request = new CarWriteDto
+        var request = new CarWriteDtoV1
         {
             Make = "Test",
             Model = "Dto",
@@ -99,7 +100,7 @@ public class CarsControllerTests
     [Fact]
     public async Task Add_Return400StatusCode_WhenGivenCarIdOfAnotherCarInDb()
     {
-        var request = new CarWriteDto
+        var request = new CarWriteDtoV1
         {
             Make = "Test",
             Model = "Dto",
@@ -117,14 +118,14 @@ public class CarsControllerTests
     [Fact]
     public async Task Add_ShouldCallAddOnCarServiceWithGivenCarId_WhenGivenCarId()
     {
-        var request = new CarWriteDto
+        var request = new CarWriteDtoV1
         {
             Make = "Test",
             Model = "Dto",
             Year = 2022
         };
         var carId = 45;
-        var expectedCarToAdd = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, AvailableParts = null};
+        var expectedCarToAdd = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Default};
         var controller = new CarsController(_carService);
 
         await controller.Add(request, carId);
@@ -135,7 +136,7 @@ public class CarsControllerTests
     [Fact]
     public async Task Update_ShouldReturn204StatusCodeAndCallCarServiceUpdate()
     {
-        var request = new CarWriteDto
+        var request = new CarWriteDtoV1
         {
             Make = "Test",
             Model = "Dto",
@@ -143,7 +144,7 @@ public class CarsControllerTests
         };
         var carId = 45;
         _carService.GetById(carId).Returns(new Car {CarId = carId});
-        var expectedCarToUpdate = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, AvailableParts = null};
+        var expectedCarToUpdate = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Default};
         var controller = new CarsController(_carService);
 
         var result = await controller.Update(request, carId) as StatusCodeResult;
@@ -155,7 +156,7 @@ public class CarsControllerTests
     [Fact]
     public async Task Update_ShouldCreateNewEntry_WhenGivenIdDoesNotExist()
     {
-        var request = new CarWriteDto
+        var request = new CarWriteDtoV1
         {
             Make = "Test",
             Model = "Dto",

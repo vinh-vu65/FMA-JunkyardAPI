@@ -6,15 +6,31 @@ namespace JunkyardWebApp.API.Mappers;
 
 public static class PartMapper
 {
-    public static PartReadDto ToDto(this Part part)
+    public static PartReadDtoV1 ToDtoV1(this Part part)
     {
-        return new PartReadDto
+        return new PartReadDtoV1
         {
             CarId = part.CarId,
             PartId = part.PartId,
             Year = part.Car!.Year,
             Make = part.Car.Make,
             Model = part.Car.Model,
+            Category = part.Category,
+            Description = part.Description,
+            Price = part.Price
+        };
+    }
+    
+    public static PartReadDtoV2 ToDtoV2(this Part part)
+    {
+        return new PartReadDtoV2
+        {
+            CarId = part.CarId,
+            PartId = part.PartId,
+            Year = part.Car!.Year,
+            Make = part.Car.Make,
+            Model = part.Car.Model,
+            Colour = part.Car.Colour,
             Category = part.Category,
             Description = part.Description,
             Price = part.Price

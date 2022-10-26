@@ -4,9 +4,10 @@ using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JunkyardWebApp.API.Controllers;
+namespace JunkyardWebApp.API.Controllers.V2;
 
 [ApiController]
+[ApiVersion("2.0")]
 [Route("api/[controller]")]
 public class CarsController : ControllerBase
 {
@@ -21,7 +22,7 @@ public class CarsController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var cars = await _carService.GetAll();
-        var mappedCars = cars.Select(c => c.ToDto());
+        var mappedCars = cars.Select(c => c.ToDtoV2());
         return Ok(mappedCars);
     }
 
@@ -35,12 +36,12 @@ public class CarsController : ControllerBase
             return NotFound(new{ StatusCode = 404, Message = "Car not found" });
         }
         
-        var carDto = car.ToDto();
+        var carDto = car.ToDtoV2();
         return Ok(carDto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Add([FromBody]CarWriteDto requestData, int? id = null)
+    public async Task<IActionResult> Add([FromBody]CarWriteDtoV2 requestData, int? id = null)
     {
         var car = new Car();
         if (id.HasValue)
@@ -53,7 +54,7 @@ public class CarsController : ControllerBase
             car.CarId = id.Value;
         }
         
-        car.UpdateWith(requestData);
+        car.UpdateWithV2(requestData);
         await _carService.Add(car);
 
         return CreatedAtAction(
@@ -63,7 +64,7 @@ public class CarsController : ControllerBase
     }
 
     [HttpPut("{carId}")]
-    public async Task<IActionResult> Update([FromBody]CarWriteDto requestData, int carId)
+    public async Task<IActionResult> Update([FromBody]CarWriteDtoV2 requestData, int carId)
     {
         var carToUpdate = await _carService.GetById(carId);
         if (carToUpdate is null)
@@ -71,7 +72,7 @@ public class CarsController : ControllerBase
             return await Add(requestData, carId);
         }
 
-        carToUpdate.UpdateWith(requestData);
+        carToUpdate.UpdateWithV2(requestData);
         await _carService.Update(carToUpdate);
         
         return NoContent();
