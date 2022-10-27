@@ -125,7 +125,7 @@ public class CarsControllerTests
             Year = 2022
         };
         var carId = 45;
-        var expectedCarToAdd = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Default};
+        var expectedCarToAdd = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Unspecified};
         var controller = new CarsController(_carService);
 
         await controller.Add(request, carId);
@@ -144,7 +144,7 @@ public class CarsControllerTests
         };
         var carId = 45;
         _carService.GetById(carId).Returns(new Car {CarId = carId});
-        var expectedCarToUpdate = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Default};
+        var expectedCarToUpdate = new Car {CarId = carId, Make = "Test", Model = "Dto", Year = 2022, Colour = CarColour.Unspecified};
         var controller = new CarsController(_carService);
 
         var result = await controller.Update(request, carId) as StatusCodeResult;

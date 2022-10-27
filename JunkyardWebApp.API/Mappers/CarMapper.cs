@@ -11,7 +11,7 @@ public static class CarMapper
         car.Year = dto.Year;
         car.Make = dto.Make;
         car.Model = dto.Model;
-        car.Colour = CarColour.Default;
+        car.Colour = CarColour.Unspecified;
     }
 
     public static CarReadDtoV1 ToDtoV1(this Car car)

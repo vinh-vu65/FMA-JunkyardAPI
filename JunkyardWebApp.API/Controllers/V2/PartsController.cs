@@ -10,6 +10,8 @@ namespace JunkyardWebApp.API.Controllers.V2;
 [ApiController]
 [ApiVersion("2.0")]
 [Route("/api/cars/{carId}/[controller]")]
+[Consumes("application/json")]
+[Produces("application/json")]
 public class PartsController : ControllerBase
 {
     private readonly IPartService _partService;
@@ -24,7 +26,7 @@ public class PartsController : ControllerBase
     /// </summary>
     /// <response code="200">Successfully retrieved all the parts</response>
     [HttpGet("/api/[controller]")]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(PartReadDtoV2), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetAll()
     {
         var parts = await _partService.GetAll();
@@ -38,14 +40,14 @@ public class PartsController : ControllerBase
     /// <response code="200">Successfully retrieved all the parts for given car</response>
     /// <response code="404">Car with given ID does not exist</response>
     [HttpGet]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(PartReadDtoV2), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetPartsByCarId(int carId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
         
         var parts = await _partService.GetPartsByCarId(carId);
@@ -60,20 +62,20 @@ public class PartsController : ControllerBase
     /// <response code="200">Successfully retrieved the specified part</response>
     /// <response code="404">One of the given IDs does not exist</response>
     [HttpGet("{partId}")]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(PartReadDtoV2), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetById(int carId, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
         if (!partExistsForCar)
         {
-            return NotFound(new{ StatusCode = 404, Message = "PartId not found for this car" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "PartId not found for this car" });
         }
 
         var part = await _partService.GetById(partId);
@@ -85,29 +87,19 @@ public class PartsController : ControllerBase
     /// <summary>
     ///     Creates a new part entry for given car
     /// </summary>
-    /// <remarks>
-    ///     Sample request:
-    ///
-    ///         POST /api/Cars/1/Parts
-    ///         {
-    ///             "category": "Engine",
-    ///             "description": "Engine for 2005 Corolla",
-    ///             "price": 1250.00
-    ///         }
-    /// </remarks>
     /// <response code="201">Successfully created a new entry</response>
     /// <response code="400">If an ID was given as a query parameter, a part with this ID already exists</response>
     /// <response code="404">Car with given ID does not exist</response>
     [HttpPost]
-    [ProducesResponseType((int)HttpStatusCode.Created)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(PartReadDtoV2), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Add(int carId, [FromBody]PartWriteDto requestData, int? partId = null)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
 
         var part = new Part { CarId = carId };
@@ -115,7 +107,7 @@ public class PartsController : ControllerBase
         {
             if (await _partService.PartExistsInDb(partId.Value))
             {
-                return BadRequest(new{ StatusCode = 400, Message = "Another part already has this partId" });
+                return BadRequest(new ApiErrorResponse { StatusCode = 400, Message = "Another part already has this partId" });
             }
             part.PartId = partId.Value;
         }
@@ -132,31 +124,21 @@ public class PartsController : ControllerBase
     /// <summary>
     ///     Updates an entry with given ID
     /// </summary>
-    /// <remarks>
-    ///     Sample request:
-    ///
-    ///         PUT /api/Cars/1/Parts/3
-    ///         {
-    ///             "category": "Brakes",
-    ///             "description": "Brakes for 2021 Tesla X",
-    ///             "price": 500.00
-    ///         }
-    /// </remarks>
     /// <response code="201">Given ID did not yet exist, successfully created new entry</response>
     /// <response code="204">Successfully updated entry with given ID</response>
     /// <response code="400">Given part ID already exists with another car</response>
     /// <response code="404">Car with given ID does not exist</response>
     [HttpPut("{partId}")]
-    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(PartReadDtoV2), (int)HttpStatusCode.Created)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Update(int carId, [FromBody]PartWriteDto requestData, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
@@ -169,7 +151,7 @@ public class PartsController : ControllerBase
 
         if (!partExistsForCar && partExistsInDb)
         {
-            return BadRequest(new{ StatusCode = 400, Message = "Another part already has this partId" });
+            return BadRequest(new ApiErrorResponse { StatusCode = 400, Message = "Another part already has this partId" });
         }
 
         var partToUpdate = await _partService.GetById(partId);
@@ -186,19 +168,19 @@ public class PartsController : ControllerBase
     /// <response code="404">One of the given IDs does not exist</response>
     [HttpDelete("{partId}")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Delete(int carId, int partId)
     {
         var carExists = await _partService.CarExists(carId);
         if (!carExists)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
 
         var partExistsForCar = await _partService.PartExistsForCar(carId, partId);
         if (!partExistsForCar)
         {
-            return NotFound(new{ StatusCode = 404, Message = "PartId not found for this car" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "PartId not found for this car" });
         }
 
         var part = await _partService.GetById(partId);

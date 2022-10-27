@@ -10,6 +10,8 @@ namespace JunkyardWebApp.API.Controllers.V1;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/[controller]")]
+[Consumes("application/json")]
+[Produces("application/json")]
 public class CarsController : ControllerBase
 {
     private readonly ICarService _carService;
@@ -24,7 +26,7 @@ public class CarsController : ControllerBase
     /// </summary>
     /// <response code="200">Successfully retrieves all the cars</response>
     [HttpGet]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CarReadDtoV1), (int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetAll()
     {
         var cars = await _carService.GetAll();
@@ -39,15 +41,15 @@ public class CarsController : ControllerBase
     /// <response code="200">Successfully retrieves the car with given ID</response>
     /// <response code="404">Car with given ID does not exist</response>
     [HttpGet("{carId}")]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(CarReadDtoV1), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetById(int carId)
     {
         var car = await _carService.GetById(carId);
         
         if (car is null)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
         
         var carDto = car.ToDtoV1();
@@ -57,21 +59,11 @@ public class CarsController : ControllerBase
     /// <summary>
     /// Creates a new car entry
     /// </summary>
-    /// <remarks>
-    ///     Sample request:
-    ///
-    ///         POST /api/Cars
-    ///         {
-    ///             "year": 2005,
-    ///             "make": "Toyota",
-    ///             "model": "Corolla"
-    ///         }
-    /// </remarks>
     /// <response code="201">Successfully created a new entry</response>
     /// <response code="400">If an ID was given as a query parameter, a car with this ID already exists</response>
     [HttpPost]
-    [ProducesResponseType((int)HttpStatusCode.Created)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(CarReadDtoV1), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.BadRequest)]
     public async Task<IActionResult> Add([FromBody]CarWriteDtoV1 requestData, int? id = null)
     {
         var car = new Car();
@@ -91,26 +83,16 @@ public class CarsController : ControllerBase
         return CreatedAtAction(
             "GetById",
             new {carId = car.CarId},
-            car);
+            car.ToDtoV1());
     }
 
     /// <summary>
     /// Updates an entry with given ID
     /// </summary>
-    /// <remarks>
-    ///     Sample request:
-    ///
-    ///         PUT /api/Cars/1
-    ///         {
-    ///             "year": 1988,
-    ///             "make": "Ford",
-    ///             "model": "Falcon"
-    ///         }
-    /// </remarks>
     /// <response code="201">Given ID did not yet exist, successfully created new entry</response>
     /// <response code="204">Successfully updated entry at given ID</response>
     [HttpPut("{carId}")]
-    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(CarReadDtoV1), (int)HttpStatusCode.Created)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     public async Task<IActionResult> Update([FromBody]CarWriteDtoV1 requestData, int carId)
     {
@@ -134,14 +116,14 @@ public class CarsController : ControllerBase
     /// <response code="404">Car with given ID does not exist</response>
     [HttpDelete("{carId}")]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(ApiErrorResponse), (int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Delete(int carId)
     {
         var car = await _carService.GetById(carId);
 
         if (car is null)
         {
-            return NotFound(new{ StatusCode = 404, Message = "Car not found" });
+            return NotFound(new ApiErrorResponse { StatusCode = 404, Message = "Car not found" });
         }
 
         await _carService.Delete(car);
