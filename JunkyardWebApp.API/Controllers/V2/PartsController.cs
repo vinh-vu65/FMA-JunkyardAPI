@@ -1,3 +1,4 @@
+using System.Net;
 using JunkyardWebApp.API.Dtos;
 using JunkyardWebApp.API.Mappers;
 using JunkyardWebApp.API.Models;
@@ -18,7 +19,12 @@ public class PartsController : ControllerBase
         _partService = partService;
     }
     
+    /// <summary>
+    ///     Retrieves all the parts in the database
+    /// </summary>
+    /// <response code="200">Successfully retrieved all the parts</response>
     [HttpGet("/api/[controller]")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
     public async Task<IActionResult> GetAll()
     {
         var parts = await _partService.GetAll();
@@ -26,7 +32,14 @@ public class PartsController : ControllerBase
         return Ok(partsDto);
     }
 
+    /// <summary>
+    ///     Retrieves all the parts for given car ID
+    /// </summary>
+    /// <response code="200">Successfully retrieved all the parts for given car</response>
+    /// <response code="404">Car with given ID does not exist</response>
     [HttpGet]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetPartsByCarId(int carId)
     {
         var carExists = await _partService.CarExists(carId);
@@ -41,7 +54,14 @@ public class PartsController : ControllerBase
         return Ok(partsDto);
     }
 
+    /// <summary>
+    ///     Retrieves a specific part
+    /// </summary>
+    /// <response code="200">Successfully retrieved the specified part</response>
+    /// <response code="404">One of the given IDs does not exist</response>
     [HttpGet("{partId}")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> GetById(int carId, int partId)
     {
         var carExists = await _partService.CarExists(carId);
@@ -62,7 +82,26 @@ public class PartsController : ControllerBase
         return Ok(partDto);
     }
 
+    /// <summary>
+    ///     Creates a new part entry for given car
+    /// </summary>
+    /// <remarks>
+    ///     Sample request:
+    ///
+    ///         POST /api/Cars/1/Parts
+    ///         {
+    ///             "category": "Engine",
+    ///             "description": "Engine for 2005 Corolla",
+    ///             "price": 1250.00
+    ///         }
+    /// </remarks>
+    /// <response code="201">Successfully created a new entry</response>
+    /// <response code="400">If an ID was given as a query parameter, a part with this ID already exists</response>
+    /// <response code="404">Car with given ID does not exist</response>
     [HttpPost]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Add(int carId, [FromBody]PartWriteDto requestData, int? partId = null)
     {
         var carExists = await _partService.CarExists(carId);
@@ -90,7 +129,28 @@ public class PartsController : ControllerBase
             part);
     }
 
+    /// <summary>
+    ///     Updates an entry with given ID
+    /// </summary>
+    /// <remarks>
+    ///     Sample request:
+    ///
+    ///         PUT /api/Cars/1/Parts/3
+    ///         {
+    ///             "category": "Brakes",
+    ///             "description": "Brakes for 2021 Tesla X",
+    ///             "price": 500.00
+    ///         }
+    /// </remarks>
+    /// <response code="201">Given ID did not yet exist, successfully created new entry</response>
+    /// <response code="204">Successfully updated entry with given ID</response>
+    /// <response code="400">Given part ID already exists with another car</response>
+    /// <response code="404">Car with given ID does not exist</response>
     [HttpPut("{partId}")]
+    [ProducesResponseType((int)HttpStatusCode.Created)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Update(int carId, [FromBody]PartWriteDto requestData, int partId)
     {
         var carExists = await _partService.CarExists(carId);
@@ -119,7 +179,14 @@ public class PartsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes the entry at given ID
+    /// </summary>
+    /// <response code="204">Successfully deleted entry at given ID</response>
+    /// <response code="404">One of the given IDs does not exist</response>
     [HttpDelete("{partId}")]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
     public async Task<IActionResult> Delete(int carId, int partId)
     {
         var carExists = await _partService.CarExists(carId);
