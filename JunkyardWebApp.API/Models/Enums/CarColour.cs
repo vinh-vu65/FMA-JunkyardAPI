@@ -2,7 +2,7 @@ namespace JunkyardWebApp.API.Models.Enums;
 
 public enum CarColour
 {
-    Default,
+    Unspecified,
     Red,
     Blue,
     Black,
