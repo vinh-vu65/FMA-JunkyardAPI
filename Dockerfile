@@ -10,4 +10,4 @@ RUN ["dotnet", "restore"]
 COPY . .
 
 FROM dotnetsdk AS TEST
-ENTRYPOINT["dotnet", "test"]
+ENTRYPOINT ["dotnet", "test"]
