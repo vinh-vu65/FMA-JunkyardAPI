@@ -7,7 +7,7 @@ steps:
       
   - wait
     
-  -label: ':cloudsmith: build image and push to Cloudsmith'
+  - label: ':cloudsmith: build image and push to Cloudsmith'
     command: ./scripts/build-and-push.sh
     branches: main
     agents:
