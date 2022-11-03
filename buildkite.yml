@@ -1,11 +1,14 @@
 ---
 steps:
-  - label: 'do not panic :cherry_blossom::whale:'
-    command: 'echo hello, engineer'
+  - label: ':test_tube: run unit tests'
+    command: ./scripts/run-unit-tests.sh
     agents:
       queue: fma-dev
       
-  - label: ':test_tube: run unit tests'
-    command: ./scripts/run-unit-tests.sh
+  - wait
+    
+  -label: ':cloudsmith: build image and push to Cloudsmith'
+    command: ./scripts/build-and-push.sh
+    branches: main
     agents:
       queue: fma-dev

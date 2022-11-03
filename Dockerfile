@@ -9,5 +9,17 @@ RUN ["dotnet", "restore"]
 
 COPY . .
 
-FROM dotnetsdk AS TEST
+FROM dotnetsdk AS test
 ENTRYPOINT ["dotnet", "test"]
+
+FROM dotnetsdk AS publish
+RUN dotnet publish "./JunkyardWebApp.API/JunkyardWebApp.API.csproj" -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
+WORKDIR /app
+
+EXPOSE 80
+EXPOSE 443
+
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "JunkyardWebApp.API.dll"]
