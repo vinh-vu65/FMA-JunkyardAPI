@@ -15,6 +15,7 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables
 var root = Directory.GetCurrentDirectory();
 var localEnvironmentFilePath = Path.Combine(root, ".env.local");
 if (File.Exists(localEnvironmentFilePath))
@@ -59,6 +60,7 @@ builder.Services.AddVersionedApiExplorer(setup =>
     setup.SubstituteApiVersionInUrl = true;
 });
 
+// Add Swagger annotations and example requests
 builder.Services.AddSwaggerGen(options =>
 {
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
