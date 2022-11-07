@@ -9,7 +9,7 @@ steps:
     
   - label: ':cloudsmith: build image and push to Cloudsmith'
     command: ./scripts/build-and-push.sh
-#    branches: main
+    branches: main
     agents:
       queue: fma-dev
       
@@ -17,6 +17,6 @@ steps:
     
   - label: ":k8s: Deploy to Europa Pre-Prod"
     command: ./scripts/deploy.sh
-#    branches: main
+    branches: main
     agents:
       queue: "europa-preprod-fma" 
