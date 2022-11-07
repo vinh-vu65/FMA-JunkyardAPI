@@ -1,6 +1,6 @@
-repo: Vinh-JunkyardWebApp
-name: junkyardAPI
+repo: vinh-junkyardwebapp
+name: junkyard-api
 namespace: fma
 image: docker.myob.com/future-makers-academy/vinh-junkyard
 containerPort: "80"
-host: junkyardAPI.svc.platform.myobdev.com
+host: junkyard-api.svc.platform.myobdev.com
