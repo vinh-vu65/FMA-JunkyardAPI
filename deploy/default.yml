@@ -1,4 +1,4 @@
-repo: myob-fma/Vinh-JunkyardWebApp
+repo: Vinh-JunkyardWebApp
 name: junkyardAPI
 namespace: fma
 image: docker.myob.com/future-makers-academy/vinh-junkyard
