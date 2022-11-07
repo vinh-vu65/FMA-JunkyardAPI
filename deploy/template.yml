@@ -1,0 +1,109 @@
+# Basic application with templating
+---
+kind: "Template"
+apiVersion: "v1"
+metadata:
+  name: $(name)
+  annotations:
+    description: "$(name) app release template"
+objects:
+
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: $(name)
+      namespace: $(namespace)
+      labels:
+        app: $(name)
+        repo: $(repo)
+
+    spec:
+      replicas: 2
+      selector:
+        matchLabels:
+          app: $(name)
+      template:
+        metadata:
+          labels:
+            app: $(name)
+            repo: $(repo)
+        spec:
+          containers:
+            - name: nginx
+              image: $(image):$(imageTag)
+              ports:
+                - containerPort: $((containerPort))
+
+  - kind: Ingress
+    apiVersion: networking.k8s.io/v1
+    metadata:
+      name: $(name)
+      namespace: $(namespace)
+      labels:
+        app: $(name)
+        repo: $(repo)
+      annotations:
+        kubernetes.io/tls-acme: "true"
+    spec:
+      tls:
+        - hosts:
+            - $(host)
+          secretName: $(name)-tls
+      rules:
+        - host: $(host)
+          http:
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: $(name)
+                    port:
+                      number: 80
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: $(name)
+      namespace: $(namespace)
+      labels:
+        app: $(name)
+        repo: $(repo)
+      annotations:
+        prometheus.io/scrape: "true"
+    spec:
+      ports:
+        - port: 80
+          targetPort: $((containerPort))
+      selector:
+        app: $(name)
+
+parameters:
+  - name: "name"
+    description: "application name"
+    required: true
+    parameterType: string
+  - name: "namespace"
+    description: "kube namespace"
+    required: true
+    parameterType: string
+  - name: "repo"
+    description: "source code repository (eg jupiter-docs)"
+    required: true
+    parameterType: string
+  - name: "containerPort"
+    description: "Kube demo port"
+    required: true
+    parameterType: "int"
+  - name: "image"
+    description: "docker image to use"
+    required: true
+    parameterType: "string"
+  - name: "imageTag"
+    description: "image tag (ie. version)"
+    required: true
+    parameterType: "string"
+  - name: "host"
+    description: "hostname application will be exposed on (eg. go-boldly.svc.platform.myobdev.com)"
+    required: true
+    parameterType: string

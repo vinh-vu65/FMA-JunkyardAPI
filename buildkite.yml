@@ -1,7 +1,7 @@
 ---
 steps:
-  - label: ':test_tube: run unit tests'
-    command: ./scripts/run-unit-tests.sh
+  - label: ':test_tube: run tests'
+    command: ./scripts/run-tests.sh
     agents:
       queue: fma-dev
       
@@ -12,3 +12,11 @@ steps:
     branches: main
     agents:
       queue: fma-dev
+      
+  - wait
+    
+  - label: ":k8s: Deploy to Europa Pre-Prod"
+    command: ./scripts/deploy.sh
+    branches: main
+    agents:
+      queue: "europa-preprod-fma" 

@@ -1,0 +1,6 @@
+repo: myob-fma/Vinh-JunkyardWebApp
+name: JunkyardAPI
+namespace: fma
+image: docker.myob.com/future-makers-academy/vinh-junkyard
+containerPort: "80"
+host: junkyardAPI.svc.platform.myobdev.com
