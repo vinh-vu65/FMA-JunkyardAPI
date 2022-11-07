@@ -15,6 +15,13 @@ using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var root = Directory.GetCurrentDirectory();
+var localEnvironmentFilePath = Path.Combine(root, ".env.local");
+if (File.Exists(localEnvironmentFilePath))
+{
+    DotEnv.Load(localEnvironmentFilePath);
+}
+
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -33,7 +40,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Db Context
 builder.Services.AddScoped<IDbSeeder, DbSeeder>();
-builder.Services.AddDbContext<JunkyardContext>(options => options.UseInMemoryDatabase("Junkyard"));
+builder.Services.AddDbContext<JunkyardContext>(options => options.UseNpgsql(DbConfiguration.GetDbConnectionString()));
 
 // Add API versioning
 builder.Services.AddApiVersioning(options =>
