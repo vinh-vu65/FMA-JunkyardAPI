@@ -1,4 +1,3 @@
-# Basic application with templating
 ---
 kind: "Template"
 apiVersion: "v1"
@@ -16,7 +15,6 @@ objects:
       labels:
         app: $(name)
         repo: $(repo)
-
     spec:
       replicas: 2
       selector:
@@ -33,6 +31,32 @@ objects:
               image: $(image):$(imageTag)
               ports:
                 - containerPort: $((containerPort))
+              env:
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: "$(dbName)-admin"
+                      key: DB_USER
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: "$(dbName)-admin"
+                      key: DB_PASSWORD
+                - name: DB_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: "$(dbName)-admin"
+                      key: DB_HOST
+                - name: DB_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: "$(dbName)-admin"
+                      key: DB_NAME
+                - name: DB_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: "$(dbName)-admin"
+                      key: DB_PORT
 
   - kind: Ingress
     apiVersion: networking.k8s.io/v1
@@ -78,32 +102,63 @@ objects:
       selector:
         app: $(name)
 
+  - kind: Database
+    apiVersion: postgres.myob.com/v1
+    metadata:
+      name: $(dbName)
+      namespace: $(namespace)
+    spec:
+      instanceClass: $(dbInstance)
+      storage: $((dbStorage))
+
 parameters:
+
   - name: "name"
     description: "application name"
     required: true
     parameterType: string
+    
   - name: "namespace"
     description: "kube namespace"
     required: true
     parameterType: string
+    
   - name: "repo"
     description: "source code repository (eg jupiter-docs)"
     required: true
     parameterType: string
+    
   - name: "containerPort"
     description: "Kube demo port"
     required: true
     parameterType: "int"
+    
   - name: "image"
     description: "docker image to use"
     required: true
     parameterType: "string"
+    
   - name: "imageTag"
     description: "image tag (ie. version)"
     required: true
     parameterType: "string"
+    
   - name: "host"
     description: "hostname application will be exposed on (eg. go-boldly.svc.platform.myobdev.com)"
     required: true
     parameterType: string
+    
+  - name: "dbName"
+    description: "database name"
+    required: true
+    parameterType: string
+    
+  - name: "dbInstance"
+    description: "database instance type"
+    required: true
+    parameterType: string
+
+  - name: "dbStorage"
+    description: "database storage"
+    required: true
+    parameterType: int

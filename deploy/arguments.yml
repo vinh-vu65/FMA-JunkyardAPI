@@ -4,3 +4,6 @@ namespace: fma
 image: docker.myob.com/future-makers-academy/vinh-junkyard
 containerPort: "80"
 host: junkyard-api.svc.platform.myobdev.com
+dbName: "junkyard-db"
+dbInstance: "db.t4g.small"
+dbStorage: "20"
