@@ -23,6 +23,9 @@ if (File.Exists(localEnvironmentFilePath))
     DotEnv.Load(localEnvironmentFilePath);
 }
 
+// Add health check
+builder.Services.AddHealthChecks();
+
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -71,6 +74,8 @@ builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health");
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

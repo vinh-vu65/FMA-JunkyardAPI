@@ -33,17 +33,17 @@ objects:
                 - containerPort: $((containerPort))
               livenessProbe:
                 httpGet:
-                  path: /swagger
+                  path: /health
                   port: $((containerPort))
                 initialDelaySeconds: 3
                 periodSeconds: 3
-              readinessProbe:
-                httpGet:
-                  path: /swagger
-                  port: $((containerPort))
-                initialDelaySeconds: 3
-                timeoutSeconds: 3
-                periodSeconds: 10
+#              readinessProbe:
+#                httpGet:
+#                  path: /swagger
+#                  port: $((containerPort))
+#                initialDelaySeconds: 3
+#                timeoutSeconds: 3
+#                periodSeconds: 10
               env:
                 - name: DB_USER
                   valueFrom:
