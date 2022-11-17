@@ -33,13 +33,13 @@ objects:
                 - containerPort: $((containerPort))
               livenessProbe:
                 httpGet:
-                  path: /health
+                  path: /swagger
                   port: $((containerPort))
                 initialDelaySeconds: 3
                 periodSeconds: 3
               readinessProbe:
                 httpGet:
-                  path: /ready
+                  path: /swagger
                   port: $((containerPort))
                 initialDelaySeconds: 3
                 timeoutSeconds: 3
