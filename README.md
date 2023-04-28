@@ -12,6 +12,8 @@ a PostgreSQL database when completing CI/CD learning objectives.
 
 - Simple CRUD API to store cars and parts
 - Cars can have many parts associated to them
+- Parts can only be from a pre-determined list of categories
+- Car's year cannot be from before 1970
 
 ## Design Choices
 

@@ -3,7 +3,7 @@ using JunkyardWebApp.API.Models.Enums;
 
 namespace JunkyardWebApp.API.Models;
 
-public class Part
+public record Part
 {
     public int PartId { get; set; }
     public PartsCategory Category { get; set; }
@@ -11,5 +11,5 @@ public class Part
     public decimal Price { get; set; }
     public int CarId { get; set; }
     [JsonIgnore]
-    public Car Car { get; set; }
+    public Car? Car { get; set; }
 }

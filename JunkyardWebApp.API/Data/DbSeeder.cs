@@ -1,18 +1,19 @@
+using JunkyardWebApp.API.Models;
 using JunkyardWebApp.API.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace JunkyardWebApp.API.Models.Data;
+namespace JunkyardWebApp.API.Data;
 
-public static class ModelBuilderExtensions
+public class DbSeeder : IDbSeeder
 {
-    public static void Seed(this ModelBuilder modelBuilder)
+    public void SeedData(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Car>()
             .HasData(
-                new Car { CarId = 1, Year = 2005, Make = "Toyota", Model = "Corolla" },
-                new Car { CarId = 2, Year = 1995, Make = "Ford", Model = "Falcon" },
-                new Car { CarId = 3, Year = 2012, Make = "Honda", Model = "Accord" },
-                new Car { CarId = 4, Year = 2003, Make = "Nissan", Model = "Silvia" }
+                new Car { CarId = 1, Year = 2005, Make = "Toyota", Model = "Corolla", Colour = CarColour.Red},
+                new Car { CarId = 2, Year = 1995, Make = "Ford", Model = "Falcon", Colour = CarColour.Blue},
+                new Car { CarId = 3, Year = 2012, Make = "Honda", Model = "Accord", Colour = CarColour.Black},
+                new Car { CarId = 4, Year = 2003, Make = "Nissan", Model = "Silvia", Colour = CarColour.Silver}
             );
         
         modelBuilder.Entity<Part>()
@@ -31,12 +32,6 @@ public static class ModelBuilderExtensions
                 new Part { PartId = 12, Category = PartsCategory.Door, Price = 190.00M, Description = "Rear driver door for 2012 Accord", CarId = 3 },
                 new Part { PartId = 13, Category = PartsCategory.Exhaust, Price = 290.00M, Description = "Exhaust for 2003 Silvia", CarId = 4 },
                 new Part { PartId = 14, Category = PartsCategory.Brakes, Price = 370.00M, Description = "Headlight for 2003 Silvia", CarId = 4 }
-                );
-        
-        modelBuilder.Entity<Customer>()
-            .HasData(
-                new Customer { CustomerId = 1, Name = "Susan Boyle", Address = "123 Fake St", Email = "susan.boyle@gmail.com", Phone = "98573643"},
-                new Customer { CustomerId = 2, Name = "Homer Simpson", Address = "742 Evergreen Tce", Email = "mmm_donuts@gmail.com", Phone = "59684938"}
                 );
     }
 }
